@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>hh-goa-2026</title>
+  </head>
+  <body>
+    <div style="padding: 20px; font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+      <h2>HH Goa 2026 Generator</h2>
+      
+      <!-- Format Toggle -->
+      <div style="margin-bottom: 20px; display: flex; gap: 15px;">
+        <label>
+          <input type="radio" name="format" value="A" checked id="radioA" /> PFP Frame
+        </label>
+        <label>
+          <input type="radio" name="format" value="B" id="radioB" /> Builder ID Card
+        </label>
+      </div>
+
+      <!-- Image Upload -->
+      <div style="margin-bottom: 20px;">
+        <input type="file" accept="image/png, image/jpeg, image/heic" id="upload" />
+      </div>
+
+      <!-- Format B Text Inputs (Hidden by default) -->
+      <div id="textInputs" style="display: none; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+        <input type="text" id="nameInput" placeholder="Your Name (e.g. John Doe)" style="padding: 8px;" />
+        <input type="text" id="roleInput" placeholder="Your Stack/Role (e.g. Fullstack Developer)" style="padding: 8px;" />
+      </div>
+
+      <!-- Canvas -->
+      <div style="margin-bottom: 20px;">
+        <canvas id="canvas" width="400" height="400" style="border: 1px solid #ccc; max-width: 100%; border-radius: 8px;"></canvas>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; gap: 10px;">
+        <button id="downloadBtn" disabled>Download Graphic</button>
+        <button id="shareBtn" disabled>Share to X</button>
+      </div>
+    </div>
+    
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
