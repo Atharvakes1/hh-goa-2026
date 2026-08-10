@@ -4,14 +4,125 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>hh-goa-2026</title>
+    <title>HH Goa 2026</title>
+    <style>
+      /* Base Reset & Dark Theme */
+      body {
+        background-color: #0f172a;
+        color: #f8fafc;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      /* The Main Container */
+      #app-container {
+        background: #1e293b;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 450px;
+        box-sizing: border-box;
+      }
+
+      h2 {
+        text-align: center;
+        margin-top: 0;
+        color: #e2e8f0;
+        font-weight: 700;
+      }
+
+      /* Styled Inputs & Toggles */
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      /* Radio button text color */
+      .radio-group {
+        display: flex;
+        gap: 15px;
+        color: #cbd5e1;
+        margin-bottom: 20px;
+      }
+
+      input[type="text"], input[type="file"] {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        background: #0f172a;
+        color: white;
+        box-sizing: border-box;
+        margin-top: 8px;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: #f97316;
+      }
+
+      /* Canvas Polish */
+      canvas {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        background: #0f172a;
+      }
+
+      /* Modern Buttons */
+      .btn-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      button:disabled {
+        background: #334155;
+        color: #64748b;
+        cursor: not-allowed;
+      }
+
+      #downloadBtn {
+        background: #f97316;
+        color: white;
+      }
+
+      #downloadBtn:hover:not(:disabled) {
+        background: #ea580c;
+      }
+
+      #shareBtn {
+        background: #1da1f2;
+        color: white;
+      }
+
+      #shareBtn:hover:not(:disabled) {
+        background: #1a91da;
+      }
+    </style>
   </head>
   <body>
-    <div style="padding: 20px; font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+    <!-- Replaced inline styles with the app-container ID -->
+    <div id="app-container">
       <h2>HH Goa 2026 Generator</h2>
       
       <!-- Format Toggle -->
-      <div style="margin-bottom: 20px; display: flex; gap: 15px;">
+      <div class="radio-group">
         <label>
           <input type="radio" name="format" value="A" checked id="radioA" /> PFP Frame
         </label>
@@ -21,23 +132,23 @@
       </div>
 
       <!-- Image Upload -->
-      <div style="margin-bottom: 20px;">
+      <div class="input-group">
         <input type="file" accept="image/png, image/jpeg, image/heic" id="upload" />
       </div>
 
       <!-- Format B Text Inputs (Hidden by default) -->
-      <div id="textInputs" style="display: none; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-        <input type="text" id="nameInput" placeholder="Your Name (e.g. John Doe)" style="padding: 8px;" />
-        <input type="text" id="roleInput" placeholder="Your Stack/Role (e.g. Fullstack Developer)" style="padding: 8px;" />
+      <div id="textInputs" class="input-group" style="display: none; flex-direction: column; gap: 10px;">
+        <input type="text" id="nameInput" placeholder="Your Name (e.g. John Doe)" />
+        <input type="text" id="roleInput" placeholder="Your Stack/Role (e.g. Fullstack Developer)" />
       </div>
 
       <!-- Canvas -->
       <div style="margin-bottom: 20px;">
-        <canvas id="canvas" width="400" height="400" style="border: 1px solid #ccc; max-width: 100%; border-radius: 8px;"></canvas>
+        <canvas id="canvas" width="400" height="400"></canvas>
       </div>
 
-      <!-- Actions -->
-      <div style="display: flex; gap: 10px;">
+      <!-- Actions (Now using btn-group) -->
+      <div class="btn-group">
         <button id="downloadBtn" disabled>Download Graphic</button>
         <button id="shareBtn" disabled>Share to X</button>
       </div>
