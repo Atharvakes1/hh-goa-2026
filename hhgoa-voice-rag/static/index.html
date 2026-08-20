@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HH Goa 2026 // Voice RAG Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Space Grotesk', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-[#08281A] text-[#F6F3E6] min-h-screen flex flex-col items-center justify-center p-4">
+
+  <div class="fixed top-0 left-0 w-96 h-96 bg-[#FF1E75]/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="fixed bottom-0 right-0 w-96 h-96 bg-[#FFD12E]/20 rounded-full blur-3xl pointer-events-none"></div>
+
+  <main class="relative z-10 w-full max-w-2xl bg-[#0B3B24]/90 border-2 border-[#FFD12E] rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(255,209,46,0.15)]">
+    
+    <header class="flex justify-between items-center border-b border-[#FFD12E]/30 pb-4 mb-6">
+      <div>
+        <p class="text-[#FF1E75] text-xs font-bold tracking-widest uppercase">HH Goa 2026 // Task 2</p>
+        <h1 class="text-2xl font-bold text-[#FFD12E]">VOICE RAG PIPELINE</h1>
+      </div>
+      <span id="badge-status" class="bg-[#FFD12E] text-[#08281A] text-xs px-3 py-1 font-bold rounded-full uppercase mono">
+        Target: &lt;200ms
+      </span>
+    </header>
+
+    <section class="flex flex-col items-center my-6">
+      <button id="mic-btn" onclick="toggleVoice()" class="relative p-6 rounded-full border-2 border-[#FF1E75] bg-[#FF1E75]/10 hover:bg-[#FF1E75]/30 transition-all duration-200 shadow-[0_0_30px_rgba(255,30,117,0.3)] group">
+        <svg id="mic-icon" class="w-10 h-10 text-[#FFD12E] group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+      </button>
+      <p id="mic-label" class="text-xs text-stone-300 mt-3 mono uppercase">Click to Speak or Type Below</p>
+    </section>
+
+    <div class="space-y-4">
+      <div class="flex gap-2">
+        <input id="query-input" type="text" placeholder="e.g. What is Hacker House Goa 2026?" class="w-full bg-[#08281A] border border-[#FFD12E]/40 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FFD12E] text-[#F6F3E6]" onkeydown="if(event.key==='Enter') runQuery()">
+        <button onclick="runQuery()" class="bg-[#FFD12E] text-[#08281A] px-5 py-3 rounded-xl font-bold text-sm hover:bg-[#ffe066] transition-colors">Query</button>
+      </div>
+
+      <div class="bg-[#08281A]/80 border border-[#FFD12E]/20 rounded-xl p-4 min-h-[90px]">
+        <div class="text-[10px] text-stone-400 mono uppercase mb-1 flex justify-between">
+          <span>Response Engine Output</span>
+          <span id="guardrail-chip" class="text-[#FFD12E]">Guardrail: Ready</span>
+        </div>
+        <p id="response-output" class="text-sm leading-relaxed text-stone-200">System standby. Speak or type a query to test end-to-end latency.</p>
+      </div>
+    </div>
+
+    <footer class="mt-6 pt-4 border-t border-[#FFD12E]/20 grid grid-cols-3 gap-3 mono text-center text-xs">
+      <div class="bg-[#08281A] p-2 rounded-lg border border-[#FFD12E]/10">
+        <div class="text-[10px] text-stone-400">P50 LATENCY</div>
+        <div id="p50-val" class="text-base font-bold text-[#FFD12E]">0 ms</div>
+      </div>
+      <div class="bg-[#08281A] p-2 rounded-lg border border-[#FFD12E]/10">
+        <div class="text-[10px] text-stone-400">P70 LATENCY</div>
+        <div id="p70-val" class="text-base font-bold text-[#FFD12E]">0 ms</div>
+      </div>
+      <div class="bg-[#08281A] p-2 rounded-lg border border-[#FFD12E]/10">
+        <div class="text-[10px] text-stone-400">P100 LATENCY</div>
+        <div id="p100-val" class="text-base font-bold text-[#FF1E75]">0 ms</div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    let recognition;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechClass();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        document.getElementById('query-input').value = text;
+        document.getElementById('mic-label').innerText = "Transcribed: " + text;
+        runQuery();
+      };
+      recognition.onerror = () => {
+        document.getElementById('mic-label').innerText = "Voice input error. Use text input.";
+      };
+    }
+
+    function toggleVoice() {
+      if (recognition) {
+        document.getElementById('mic-label').innerText = "Listening... Speak now";
+        recognition.start();
+      } else {
+        alert("Speech Recognition not supported in this browser. Please type your query.");
+      }
+    }
+
+    async function runQuery() {
+      const query = document.getElementById('query-input').value.trim();
+      if (!query) return;
+
+      const outputEl = document.getElementById('response-output');
+      const guardrailEl = document.getElementById('guardrail-chip');
+      outputEl.innerText = "Querying vector index & LLM...";
+
+      try {
+        const res = await fetch('/api/rag', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({query})
+        });
+        const data = await res.json();
+
+        outputEl.innerText = data.answer;
+        guardrailEl.innerText = `Guardrail: ${data.guardrail_status} (${data.total_latency_ms}ms)`;
+
+        if (data.telemetry) {
+          document.getElementById('p50-val').innerText = `${data.telemetry.p50} ms`;
+          document.getElementById('p70-val').innerText = `${data.telemetry.p70} ms`;
+          document.getElementById('p100-val').innerText = `${data.telemetry.p100} ms`;
+        }
+      } catch (err) {
+        outputEl.innerText = "Error executing query pipeline.";
+      }
+    }
+  </script>
+</body>
+</html>
